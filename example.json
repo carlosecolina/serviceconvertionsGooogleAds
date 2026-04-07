@@ -1,0 +1,82 @@
+{
+  "_token": "E0hOQhzQcwiebKns1vkREtNQ9NR6uePYNWgwiBVr",
+  "cart": [
+    {
+      "id": 1,
+      "quantity": 1,
+      "usePoints": false
+    },
+    {
+      "id": 2,
+      "quantity": 37,
+      "usePoints": true
+    }
+  ],
+  "address": {
+    "fullname": "Carlos Manuel Gamboa Palomino",
+    "phone": "51999413711",
+    "fulladdress": "347H+V9M, José Gálvez, Pichanaki 12866, Perú",
+    "street": "Ub. San Jose 2da Etapa",
+    "number": "13",
+    "mz": "T",
+    "department": "Junín",
+    "province": "Chanchamayo",
+    "district": "Pichanaki",
+    "residenceType": "Casa",
+    "reference": "A 3 cuadras del instituto Superior Tecnologico publico de pichanaqui",
+    "postal_code": "12866",
+    "coordinates": {
+      "latitude": -10.9352795,
+      "longitude": -74.8715763
+    }
+  },
+  "dedication": {},
+  "billing": {
+    "type": "boleta",
+    "ruc": "",
+    "dni": "72941485",
+    "name": "CARLOS MANUEL",
+    "lastname": "GAMBOA PALOMINO",
+    "address": "Ub. San Jose 2da Etapa T-13",
+    "email": "gamboapalominocarlosmanuel@gmail.com"
+  },
+  "consumer": {
+    "phone": "51999413711"
+  },
+  "culqi": {
+    "object": "token",
+    "type": "card",
+    "id": "tkn_test_cqixobOxEhmaOWSz",
+    "email": "gamboapalominocarlosmanuel@gmail.com",
+    "creation_date": 1724903889671,
+    "card_number": "41111111****1111",
+    "last_four": "1111",
+    "active": true,
+    "iin": {
+      "object": "iin",
+      "issuer": {
+        "name": "BCP",
+        "country": "PERU",
+        "country_code": "PE",
+        "website": "https://www.chase.com",
+        "phone_number": "+ (1) 212-270-6000"
+      },
+      "bin": "41111111",
+      "card_brand": "Visa",
+      "card_type": "Débito",
+      "card_category": null,
+      "installments_allowed": []
+    },
+    "client": {
+      "ip": "190.233.91.45",
+      "device_type": "escritorio",
+      "browser": "Chrome-128.0.0.0",
+      "device_fingerprint": "8623b54331630db71c23cb6b62ac86cd-03557b176dbf409abe0cba8731b8cc58",
+      "ip_country": "Peru",
+      "ip_country_code": "PE"
+    },
+    "metadata": {
+      "installments": 1
+    }
+  }
+}

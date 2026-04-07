@@ -1,0 +1,149 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\ConversionGoogleAds;
+
+use Google\Ads\GoogleAds\Lib\V23\GoogleAdsClientBuilder;
+
+use Google\Ads\GoogleAds\V23\Services\ClickConversion as ServicesClickConversion;
+use Google\Ads\GoogleAds\V23\Services\UploadClickConversionsRequest as ServicesUploadClickConversionsRequest;
+use Illuminate\Support\Facades\Log;
+use Google\Auth\Credentials\UserRefreshCredentials;
+
+use Google\Ads\GoogleAds\Lib\V23\GoogleAdsClient;
+use Google\Ads\GoogleAds\V23\Services\GoogleAdsRow;
+use Google\Ads\GoogleAds\V23\Services\SearchGoogleAdsRequest;
+use Google\Ads\GoogleAds\V23\Enums\CampaignStatusEnum\CampaignStatus;
+use Google\Auth\Credentials\ServiceAccountCredentials;
+
+class GoogleAdsService
+{
+
+
+  public function sendConversion($data)
+  {
+    $oAuth2Credential = $this->getOautCredentials();
+
+    $googleAdsClient = (new GoogleAdsClientBuilder())
+      ->withOAuth2Credential($oAuth2Credential)
+      ->withDeveloperToken(config('services.google_ads.developer_token'))
+      ->withLoginCustomerId($data['customer_id'])
+      ->build();
+
+
+    $conversion = new ServicesClickConversion([
+      'conversion_action' => 'customers/' . $data['customer_id'] . '/conversionActions/' . $data['conversion_action_id'],
+      'gclid' => $data['gclid'],
+      'conversion_date_time' =>  now()->format('Y-m-d H:i:sP'),
+      'conversion_value' => $data['value'],
+      'currency_code' => 'PEN',
+    ]);
+
+
+    $request = new ServicesUploadClickConversionsRequest([
+      'customer_id' => $data['customer_id'],
+      'conversions' => [$conversion],
+      'validate_only' => true,
+      'partial_failure' => true,
+    ]);
+
+    return $googleAdsClient
+      ->getConversionUploadServiceClient()
+      ->uploadClickConversions($request);
+  }
+
+  public function sendconversionOffline($data, $user)
+  {
+
+    $oAuth2Credential = new UserRefreshCredentials(
+      null, // Scopes (normalmente no se requieren aquí si ya tienes el refresh_token)
+      [
+        'client_id'     => config('services.google.client_id'),
+        'client_secret' => config('services.google.client_secret'),
+        'refresh_token' => $user->google_refresh_token
+      ]
+    );
+
+    $googleAdsClient = (new GoogleAdsClientBuilder())
+      ->withOAuth2Credential($oAuth2Credential)
+      ->withDeveloperToken(config('services.google_ads.developer_token'))
+      ->withLoginCustomerId($data['customer_id'])
+      ->build();
+
+
+    $conversion = new ServicesClickConversion([
+      'conversion_action' => 'customers/' . $data['customer_id'] . '/conversionActions/' . $data['conversion_action_id'],
+      'gclid' => $data['gclid'],
+      'conversion_date_time' =>  now()->format('Y-m-d H:i:sP'),
+      'conversion_value' => $data['value'],
+      'currency_code' => 'PEN',
+    ]);
+
+
+    $request = new ServicesUploadClickConversionsRequest([
+      'customer_id' => $data['customer_id'],
+      'conversions' => [$conversion],
+      'validate_only' => true,
+      'partial_failure' => true,
+    ]);
+
+    return $googleAdsClient
+      ->getConversionUploadServiceClient()
+      ->uploadClickConversions($request);
+  }
+
+
+  private function getOautCredentials()
+  {
+    $user = auth()->user();
+    $oAuth2Credential = new UserRefreshCredentials(
+      null, // Scopes (normalmente no se requieren aquí si ya tienes el refresh_token)
+      [
+        'client_id'     => config('services.google.client_id'),
+        'client_secret' => config('services.google.client_secret'),
+        'refresh_token' => $user->google_refresh_token
+      ]
+    );
+
+    return $oAuth2Credential;
+  }
+
+
+
+
+
+  public function getActiveConversionIds(int $customerId)
+  {
+
+    $oAuth2Credential = $this->getOautCredentials();
+
+    $googleAdsClient = (new GoogleAdsClientBuilder())
+      ->withOAuth2Credential($oAuth2Credential)
+      ->withDeveloperToken(config('services.google_ads.developer_token'))
+      ->withLoginCustomerId(config('google_ads.customer_id'))
+      ->build();
+
+    $googleAdsServiceClient = $googleAdsClient->getGoogleAdsServiceClient();
+
+    // Query para traer solo las activas
+    $query = "SELECT conversion_action.id, conversion_action.name 
+              FROM conversion_action 
+              WHERE conversion_action.status = 'ENABLED'";
+
+    $request = SearchGoogleAdsRequest::build($customerId, $query);
+    $stream = $googleAdsServiceClient->search($request);
+
+    $map = [];
+
+    foreach ($stream->iterateAllElements() as $googleAdsRow) {
+      $con = $googleAdsRow->getConversionAction();
+      $map[] = [
+        "convertion_id" => $con->getId(),
+        "name" => $con->getName()
+      ];
+    }
+
+    return $map;
+  }
+}

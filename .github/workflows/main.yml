@@ -1,0 +1,45 @@
+name: Deploy to Contabo
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # Permitir ejecución manual
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Deploy via SSH
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+        run: |
+          sshpass -p "$SSH_PASSWORD" ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
+            echo "Starting deployment..."
+            cd /var/docker/lasdonas || exit 1
+            
+            echo "Pulling latest changes..."
+            git pull origin main
+            
+            echo "Building and starting containers..."
+            docker compose up --build -d
+            
+            
+            echo "Running Laravel commands..."
+            CONTAINER_ID=$(docker ps -qf "ancestor=lasdonas/laravel-app" | head -n1)
+            if [ ! -z "$CONTAINER_ID" ]; then
+              docker exec $CONTAINER_ID bash -c "cd /var/www && php artisan migrate --force && php artisan config:clear && php artisan cache:clear"
+              curl -f https://wajs.factusode.xyz/api/github/FLD || echo "Webhook failed"
+            else
+              echo "Container not found!"
+              exit 1
+            fi
+            
+            echo "Deployment completed!"
+          EOF
+          

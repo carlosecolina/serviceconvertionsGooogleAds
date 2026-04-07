@@ -1,0 +1,28 @@
+{
+  "resources/css/app.css": {
+    "file": "app.css",
+    "isEntry": true,
+    "src": "resources/css/app.css"
+  },
+  "resources/js/Admin/Dashboard.jsx": {
+    "file": "assets/Dashboard-VrCC9O3f.js",
+    "imports": [
+      "resources/js/Utils/CreateReactScript.jsx"
+    ],
+    "isEntry": true,
+    "src": "resources/js/Admin/Dashboard.jsx"
+  },
+  "resources/js/Utils/CreateReactScript.jsx": {
+    "css": [
+      "CreateReactScript.css"
+    ],
+    "file": "assets/CreateReactScript-e483LACR.js",
+    "isEntry": true,
+    "src": "resources/js/Utils/CreateReactScript.jsx"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-w40geAFS.js",
+    "isEntry": true,
+    "src": "resources/js/app.js"
+  }
+}
