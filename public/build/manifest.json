@@ -1,12 +1,17 @@
 {
+  "_index-kdcK0Z_5.js": {
+    "file": "assets/index-kdcK0Z_5.js"
+  },
   "resources/css/app.css": {
     "file": "app.css",
     "isEntry": true,
     "src": "resources/css/app.css"
   },
   "resources/js/Admin/Dashboard.jsx": {
-    "file": "assets/Dashboard-VrCC9O3f.js",
+    "file": "assets/Dashboard-3F-n5C01.js",
     "imports": [
+      "resources/js/components/Table.jsx",
+      "_index-kdcK0Z_5.js",
       "resources/js/Utils/CreateReactScript.jsx"
     ],
     "isEntry": true,
@@ -16,7 +21,10 @@
     "css": [
       "CreateReactScript.css"
     ],
-    "file": "assets/CreateReactScript-e483LACR.js",
+    "file": "assets/CreateReactScript-0xtYn3T_.js",
+    "imports": [
+      "_index-kdcK0Z_5.js"
+    ],
     "isEntry": true,
     "src": "resources/js/Utils/CreateReactScript.jsx"
   },
@@ -24,5 +32,22 @@
     "file": "assets/app-w40geAFS.js",
     "isEntry": true,
     "src": "resources/js/app.js"
+  },
+  "resources/js/components/DataGrid.jsx": {
+    "file": "assets/DataGrid-EzjjIEE0.js",
+    "imports": [
+      "resources/js/components/Table.jsx",
+      "_index-kdcK0Z_5.js"
+    ],
+    "isEntry": true,
+    "src": "resources/js/components/DataGrid.jsx"
+  },
+  "resources/js/components/Table.jsx": {
+    "file": "assets/Table-bloUVdWp.js",
+    "imports": [
+      "_index-kdcK0Z_5.js"
+    ],
+    "isEntry": true,
+    "src": "resources/js/components/Table.jsx"
   }
 }

@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Models\ConversionGoogleAds;
-
+use App\Models\User;
 use Google\Ads\GoogleAds\Lib\V23\GoogleAdsClientBuilder;
 
 use Google\Ads\GoogleAds\V23\Services\ClickConversion as ServicesClickConversion;
@@ -12,10 +12,14 @@ use Illuminate\Support\Facades\Log;
 use Google\Auth\Credentials\UserRefreshCredentials;
 
 use Google\Ads\GoogleAds\Lib\V23\GoogleAdsClient;
+use Google\Ads\GoogleAds\V23\Common\UserIdentifier as CommonUserIdentifier;
 use Google\Ads\GoogleAds\V23\Services\GoogleAdsRow;
 use Google\Ads\GoogleAds\V23\Services\SearchGoogleAdsRequest;
 use Google\Ads\GoogleAds\V23\Enums\CampaignStatusEnum\CampaignStatus;
 use Google\Auth\Credentials\ServiceAccountCredentials;
+
+
+use Google\Ads\GoogleAds\V23\Enums\UserIdentifierSourceEnum\UserIdentifierSource;
 
 class GoogleAdsService
 {
@@ -45,6 +49,56 @@ class GoogleAdsService
       'customer_id' => $data['customer_id'],
       'conversions' => [$conversion],
       'validate_only' => true,
+      'partial_failure' => true,
+    ]);
+
+    return $googleAdsClient
+      ->getConversionUploadServiceClient()
+      ->uploadClickConversions($request);
+  }
+
+  public function sendConversionAdvanced($data)
+  {
+    $oAuth2Credential = $this->getOautCredentials();
+
+
+    $googleAdsClient = (new GoogleAdsClientBuilder())
+      ->withOAuth2Credential($oAuth2Credential)
+      ->withDeveloperToken(config('services.google_ads.developer_token'))
+      ->withLoginCustomerId(config('google_ads.customer_id'))
+      ->build();
+
+
+    // 1. Preparamos los identificadores de usuario
+    $userIdentifiers = [
+      new CommonUserIdentifier([
+        'user_identifier_source' => UserIdentifierSource::FIRST_PARTY,
+        'hashed_email' => hash('sha256', strtolower(trim($data['email'])))
+      ]),
+      new CommonUserIdentifier([
+        'user_identifier_source' => UserIdentifierSource::FIRST_PARTY,
+        'hashed_phone_number' => hash('sha256', trim($data['phone']))
+      ]),
+    ];
+
+
+
+    // 2. Integramos en tu objeto de conversión
+    $conversion = new ServicesClickConversion([
+      'conversion_action' => 'customers/' . $data['customer_id'] . '/conversionActions/' . $data['conversion_action_id'],
+      'gclid' => $data['gclid'],
+      'conversion_date_time' => $data['conversion_date_time'],
+      'conversion_value' => $data['value'],
+      'currency_code' => 'PEN',
+      // Añadimos la propiedad de conversiones avanzadas:
+      'user_identifiers' => $userIdentifiers,
+    ]);
+
+
+    $request = new ServicesUploadClickConversionsRequest([
+      'customer_id' => $data['customer_id'],
+      'conversions' => [$conversion],
+      'validate_only' => false,
       'partial_failure' => true,
     ]);
 
@@ -96,9 +150,9 @@ class GoogleAdsService
 
   private function getOautCredentials()
   {
-    $user = auth()->user();
+    $user = User::where('email', 'hola@sode.pe')->first();
     $oAuth2Credential = new UserRefreshCredentials(
-      null, // Scopes (normalmente no se requieren aquí si ya tienes el refresh_token)
+      null,
       [
         'client_id'     => config('services.google.client_id'),
         'client_secret' => config('services.google.client_secret'),

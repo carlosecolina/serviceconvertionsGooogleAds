@@ -60,8 +60,9 @@ Route::middleware('apikey')->group(function () {
 
 
 
-Route::post('/google-ads/sync', [GoogleAdsConversionController::class, 'sync']);
+Route::post('/google-ads/sync', [GoogleAdsConversionController::class, 'setConvertionsValues']);
 
 Route::middleware(['web', 'auth:sanctum', 'verified'])->group(function () {
     Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect']);
+    Route::post('/admin/convertions/paginate', [DashboardController::class, 'paginate']);
 });

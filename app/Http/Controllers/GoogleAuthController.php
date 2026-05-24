@@ -51,7 +51,7 @@ class GoogleAuthController extends Controller
         'google_token_expires_at' => now()->addSeconds($googleUser->expiresIn),
         'external_auth' => 'google_ads',
       ]);
-      $redirectUrl = url('/admin/sales');
+      $redirectUrl = url('/admin/dashboard');
 
       return response("
             <script>

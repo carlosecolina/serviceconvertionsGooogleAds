@@ -11,10 +11,8 @@ class ConversionGoogleAds extends Model
     protected $table = 'conversion_google_ads';
 
     protected $casts = [
-        'conversion_time' => 'datetime', // <--- Esto es la clave
+        'conversion_time' => 'datetime',
     ];
-
-
 
     protected $fillable = [
 
@@ -29,5 +27,8 @@ class ConversionGoogleAds extends Model
         'attempts',
         'error_message',
         'sent_at',
+        'email',
+        'phone',
+        'customer_id'
     ];
 }
