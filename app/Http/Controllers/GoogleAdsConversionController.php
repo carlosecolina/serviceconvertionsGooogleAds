@@ -22,7 +22,7 @@ class GoogleAdsConversionController extends Controller
 
     try {
       $validator = Validator::make($request->all(), [
-        'id'                => 'required|integer',
+
         'gclid'             => 'required|string|min:10',
         'conversion_value'  => 'required|numeric|min:0',
         'currency_code'     => 'required|string|size:3',
@@ -51,8 +51,8 @@ class GoogleAdsConversionController extends Controller
       $customer_id = $request->customer_id;
 
 
-      $conversion = ConversionGoogleAds::firstOrCreate(
-        ['orden_id' => $id],
+      $conversion = ConversionGoogleAds::create(
+
         [
           'gclid' => $gclid,
           'conversion_value' => $conversion_value,
