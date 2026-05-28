@@ -30,6 +30,20 @@ class GoogleAdsConversionController extends Controller
 
     try {
       // 1. Validar apuntando a customData usando la notación de puntos
+      $gclid = $request->input('customData.gclid')
+        ?? $request->input('gclid')
+        ?? $request->input('contact.attributionSource.gclid');
+
+      // 2. Forzar que siempre exista dentro de customData para que tu validador no cambie
+      if ($gclid) {
+        $customData = $request->input('customData', []);
+        $customData['gclid'] = $gclid;
+
+        // Inyectamos el customData corregido de vuelta al request
+        $request->merge(['customData' => $customData]);
+      }
+
+      // 3. Tu validador se queda exactamente igual y siempre pasará si existe en algún lado
       $validator = Validator::make($request->all(), [
         'customData.gclid'             => 'required|string|min:10',
         'customData.conversion_value'  => 'required|numeric|min:0',
