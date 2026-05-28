@@ -19,6 +19,14 @@ class GoogleAdsConversionController extends Controller
   //{
   public function setConvertionsValues(Request $request)
   {
+    Log::info('GHL Webhook Recibido - setConvertionsValues', [
+      'url'        => $request->fullUrl(),
+      'method'     => $request->method(),
+      'ip'         => $request->ip(),
+      'headers'    => $request->headers->all(), // Útil para verificar tokens de autenticación de GHL
+      'payload'    => $request->all()           // Captura todo el JSON o POST data
+    ]);
+
 
     try {
       $validator = Validator::make($request->all(), [
