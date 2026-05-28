@@ -70,29 +70,39 @@ class GoogleAdsService
 
 
     // 1. Preparamos los identificadores de usuario
-    $userIdentifiers = [
-      new CommonUserIdentifier([
+    $userIdentifiers = [];
+    // 1. Validar e insertar Email si existe
+    if (!empty($data['email'])) {
+      $userIdentifiers[] = new CommonUserIdentifier([
         'user_identifier_source' => UserIdentifierSource::FIRST_PARTY,
         'hashed_email' => hash('sha256', strtolower(trim($data['email'])))
-      ]),
-      new CommonUserIdentifier([
+      ]);
+    }
+
+    // 2. Validar e insertar Teléfono si existe
+    if (!empty($data['phone'])) {
+      // Tip: Google requiere que el teléfono tenga el formato internacional (ej: +51934788587)
+      // Como GoHighLevel ya te lo manda con "+51", solo limpiamos espacios.
+      $userIdentifiers[] = new CommonUserIdentifier([
         'user_identifier_source' => UserIdentifierSource::FIRST_PARTY,
         'hashed_phone_number' => hash('sha256', trim($data['phone']))
-      ]),
-    ];
+      ]);
+    }
 
-
-
-    // 2. Integramos en tu objeto de conversión
-    $conversion = new ServicesClickConversion([
+    $conversionData = [
       'conversion_action' => 'customers/' . $data['customer_id'] . '/conversionActions/' . $data['conversion_action_id'],
       'gclid' => $data['gclid'],
       'conversion_date_time' => $data['conversion_date_time'],
       'conversion_value' => $data['value'],
-      'currency_code' => 'PEN',
-      // Añadimos la propiedad de conversiones avanzadas:
-      'user_identifiers' => $userIdentifiers,
-    ]);
+      'currency_code' => $data['currency_code'],
+    ];
+
+    if (!empty($userIdentifiers)) {
+      $conversionData['user_identifiers'] = $userIdentifiers;
+    }
+
+    // 2. Integramos en tu objeto de conversión
+    $conversion = new ServicesClickConversion($conversionData);
 
 
     $request = new ServicesUploadClickConversionsRequest([

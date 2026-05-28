@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
     {
 
         $schedule->command('ads:sync-conversions')->hourly();
-        $schedule->command('reminders:send')->daily();
+        // $schedule->command('reminders:send')->daily();
     }
 
     /**

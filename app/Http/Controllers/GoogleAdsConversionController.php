@@ -29,15 +29,15 @@ class GoogleAdsConversionController extends Controller
 
 
     try {
+      // 1. Validar apuntando a customData usando la notación de puntos
       $validator = Validator::make($request->all(), [
-
-        'gclid'             => 'required|string|min:10',
-        'conversion_value'  => 'required|numeric|min:0',
-        'currency_code'     => 'required|string|size:3',
-        'conversion_action' => 'required|string',
-        'conversion_time'   => 'required|date',
-        'closed_at'         => 'nullable|date',
+        'customData.gclid'             => 'required|string|min:10',
+        'customData.conversion_value'  => 'required|numeric|min:0',
+        'customData.currency_code'     => 'required|string|size:3',
+        'customData.conversion_action' => 'required|string',
+        'customData.customer_id'       => 'required|string',
       ]);
+
       if ($validator->fails()) {
         return response()->json([
           'status' => 'error',
@@ -45,18 +45,21 @@ class GoogleAdsConversionController extends Controller
           'errors' => $validator->errors()
         ], 422);
       }
-      $validated = $validator->validated();
-      $id = $request->id;
 
-      $gclid = $request->gclid;
-      $conversion_value = $request->conversion_value;
-      $currency_code = $request->currency_code;
-      $conversion_action = $request->conversion_action;
-      $conversion_time = $request->conversion_time;
-      $email = $request->email;
-      $phone = $request->phone;
-      $closed_at = $request->closed_at;
-      $customer_id = $request->customer_id;
+      // 2. Extraer los datos validados usando data_get de forma segura
+      $gclid             = data_get($request, 'customData.gclid');
+      $conversion_value  = data_get($request, 'customData.conversion_value');
+      $currency_code     = data_get($request, 'customData.currency_code');
+      $conversion_action = data_get($request, 'customData.conversion_action');
+      $customer_id       = data_get($request, 'customData.customer_id');
+
+      // Datos adicionales que vienen en la raíz o en otros nodos del JSON de GHL
+      $email             = data_get($request, 'customData.email') ?? data_get($request, 'email');
+      $phone             = data_get($request, 'phone'); // Viene directo en la raíz: +51934788587
+
+      // 3. Setear las fechas con Carbon como lo necesitas
+      $conversion_time   = Carbon::now();
+      $closed_at         = Carbon::now();
 
 
       $conversion = ConversionGoogleAds::create(
