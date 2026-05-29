@@ -46,7 +46,7 @@ class GoogleAdsConversionController extends Controller
       // 3. Tu validador se queda exactamente igual y siempre pasará si existe en algún lado
       $validator = Validator::make($request->all(), [
         'customData.gclid'             => 'required|string|min:10',
-        'customData.conversion_value'  => 'required|numeric|min:0',
+        'customData.conversion_value'  => 'required|min:0',
         'customData.currency_code'     => 'required|string|size:3',
         'customData.conversion_action' => 'required|string',
         'customData.customer_id'       => 'required|string',
@@ -62,7 +62,7 @@ class GoogleAdsConversionController extends Controller
 
       // 2. Extraer los datos validados usando data_get de forma segura
       $gclid             = data_get($request, 'customData.gclid');
-      $conversion_value  = data_get($request, 'customData.conversion_value');
+      $conversion_value  = (int) data_get($request, 'customData.conversion_value');
       $currency_code     = data_get($request, 'customData.currency_code');
       $conversion_action = data_get($request, 'customData.conversion_action');
       $customer_id       = data_get($request, 'customData.customer_id');
