@@ -63,7 +63,7 @@ class SyncGoogleAdsConversions extends Command
           'conversion_action_id' => $conversion->conversion_action,
           'gclid'                => $conversion->gclid,
           'value'                => $conversion->conversion_value,
-          'currency'             => $conversion->currency_code,
+          'currency_code'             => $conversion->currency_code,
           'email' => $conversion->email,
           'phone'   => $conversion->phone,
           'conversion_date_time' => $conversion->conversion_time->format('Y-m-d H:i:sP'),
