@@ -65,7 +65,7 @@ class GoogleAdsService
     $googleAdsClient = (new GoogleAdsClientBuilder())
       ->withOAuth2Credential($oAuth2Credential)
       ->withDeveloperToken(config('services.google_ads.developer_token'))
-      ->withLoginCustomerId(config('google_ads.customer_id'))
+      ->withLoginCustomerId($data['customer_id'])
       ->build();
 
 
