@@ -58,7 +58,7 @@ class SyncGoogleAdsConversions extends Command
       try {
         $response = $service->sendConversionAdvanced([
           // 'customer_id'          => config('google_ads.customer_id'),
-          'customer_id'          => (int) $conversion->customer_id,
+          'customer_id'          => $conversion->customer_id,
           'refresh_token'        => $admin->google_ads_refresh_token,
           'conversion_action_id' => $conversion->conversion_action,
           'gclid'                => $conversion->gclid,
